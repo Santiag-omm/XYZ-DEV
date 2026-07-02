@@ -1,0 +1,23 @@
+{
+  "name": "autopartes-xyz-login",
+  "version": "1.0.0",
+  "description": "Modulo seguro de registro e inicio de sesion para AutoPartes XYZ.",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.1",
+    "express-session": "^1.18.1",
+    "helmet": "^8.1.0",
+    "sanitize-html": "^2.17.0",
+    "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "supertest": "^7.1.1"
+  }
+}

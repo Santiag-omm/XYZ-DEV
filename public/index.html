@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AutoPartes XYZ | Acceso</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="brand-panel" aria-labelledby="brand-title">
+        <p class="eyebrow">Refaccionaria</p>
+        <h1 id="brand-title">AutoPartes XYZ</h1>
+        <p class="brand-copy">Accede a tu cuenta para consultar catalogo, disponibilidad y pedidos.</p>
+        <div class="security-strip" aria-label="Controles activos">
+          <span>TLS listo</span>
+          <span>bcrypt</span>
+          <span>CAPTCHA</span>
+          <span>Sesion protegida</span>
+        </div>
+      </section>
+
+      <section class="access-panel" aria-label="Registro e inicio de sesion">
+        <div class="tabs" role="tablist" aria-label="Selecciona accion">
+          <button class="tab active" type="button" data-tab="login" role="tab" aria-selected="true">
+            Iniciar sesion
+          </button>
+          <button class="tab" type="button" data-tab="register" role="tab" aria-selected="false">
+            Crear cuenta
+          </button>
+        </div>
+
+        <form id="login-form" class="auth-form" novalidate>
+          <label>
+            Correo
+            <input name="email" type="email" autocomplete="email" maxlength="120" required />
+          </label>
+          <label>
+            Contrasena
+            <input name="password" type="password" autocomplete="current-password" maxlength="72" required />
+          </label>
+          <label>
+            CAPTCHA: <strong data-captcha-question>cargando...</strong>
+            <input name="captchaAnswer" inputmode="numeric" maxlength="3" required />
+          </label>
+          <button type="submit">Entrar</button>
+        </form>
+
+        <form id="register-form" class="auth-form hidden" novalidate>
+          <div class="two-columns">
+            <label>
+              Nombre
+              <input name="name" autocomplete="name" minlength="2" maxlength="80" required />
+            </label>
+            <label>
+              Telefono
+              <input name="phone" autocomplete="tel" minlength="8" maxlength="20" required />
+            </label>
+          </div>
+          <label>
+            Correo
+            <input name="email" type="email" autocomplete="email" maxlength="120" required />
+          </label>
+          <label>
+            Direccion de entrega
+            <input name="address" autocomplete="street-address" minlength="8" maxlength="180" required />
+          </label>
+          <label>
+            Contrasena
+            <input
+              name="password"
+              type="password"
+              autocomplete="new-password"
+              minlength="8"
+              maxlength="72"
+              pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,72}"
+              required
+            />
+          </label>
+          <label>
+            CAPTCHA: <strong data-captcha-question>cargando...</strong>
+            <input name="captchaAnswer" inputmode="numeric" maxlength="3" required />
+          </label>
+          <button type="submit">Crear cuenta</button>
+        </form>
+
+        <section id="profile" class="profile hidden" aria-live="polite">
+          <h2>Sesion activa</h2>
+          <dl>
+            <div>
+              <dt>Cliente</dt>
+              <dd data-profile="name"></dd>
+            </div>
+            <div>
+              <dt>Correo</dt>
+              <dd data-profile="email"></dd>
+            </div>
+            <div>
+              <dt>Direccion</dt>
+              <dd data-profile="address"></dd>
+            </div>
+          </dl>
+          <button id="logout-button" type="button">Cerrar sesion</button>
+        </section>
+
+        <p id="message" class="message" role="status" aria-live="polite"></p>
+      </section>
+    </main>
+  </body>
+</html>
