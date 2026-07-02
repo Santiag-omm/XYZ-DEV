@@ -72,23 +72,6 @@ h1 {
   line-height: 1.6;
 }
 
-.security-strip {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 28px;
-}
-
-.security-strip span {
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.7);
-  padding: 8px 12px;
-  color: #29384d;
-  font-size: 0.9rem;
-  font-weight: 700;
-}
-
 .access-panel {
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -129,17 +112,6 @@ button[type="submit"],
   gap: 14px;
 }
 
-.form-note {
-  margin: 0;
-  border-left: 4px solid var(--focus);
-  background: #fff8e8;
-  padding: 10px 12px;
-  color: #4d3f22;
-  font-size: 0.9rem;
-  line-height: 1.45;
-  font-weight: 700;
-}
-
 .two-columns {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -162,6 +134,14 @@ input {
   background: var(--surface);
   padding: 0 12px;
   color: var(--ink);
+}
+
+input[aria-invalid="true"] {
+  border-color: var(--accent);
+}
+
+input[aria-invalid="false"] {
+  border-color: #24814e;
 }
 
 .field-help {

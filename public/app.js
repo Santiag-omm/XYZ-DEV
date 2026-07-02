@@ -7,6 +7,7 @@ const loginForm = document.querySelector("#login-form");
 const registerForm = document.querySelector("#register-form");
 const profile = document.querySelector("#profile");
 const tabs = document.querySelectorAll(".tab");
+const registerPhoneInput = registerForm.elements.phone;
 const registerPasswordInput = registerForm.elements.password;
 const passwordStrengthBar = document.querySelector("#password-strength-bar");
 const passwordStrengthLabel = document.querySelector("#password-strength-label");
@@ -28,8 +29,8 @@ const clientRules = {
     message: "El nombre debe tener 2 a 80 caracteres validos."
   },
   phone: {
-    pattern: /^\+?[0-9 ()-]{8,20}$/,
-    message: "El telefono debe tener 8 a 20 caracteres validos."
+    pattern: /^[0-9]{10}$/,
+    message: "El telefono debe tener exactamente 10 digitos."
   },
   address: {
     pattern: /^.{8,180}$/u,
@@ -45,15 +46,16 @@ tabs.forEach((tab) => {
   tab.addEventListener("click", () => switchTab(tab.dataset.tab));
 });
 
-registerPasswordInput.addEventListener("input", () => {
-  updatePasswordStrength(registerPasswordInput.value);
+registerPasswordInput.addEventListener("input", validatePasswordLive);
+registerPhoneInput.addEventListener("input", () => {
+  registerPhoneInput.value = registerPhoneInput.value.replace(/\D/g, "").slice(0, 10);
 });
 
 loginForm.addEventListener("submit", (event) => handleSubmit(event, "/api/login"));
 registerForm.addEventListener("submit", (event) => handleSubmit(event, "/api/register"));
 document.querySelector("#logout-button").addEventListener("click", logout);
 
-updatePasswordStrength("");
+validatePasswordLive();
 refreshCaptcha();
 loadProfile();
 
@@ -92,7 +94,7 @@ async function handleSubmit(event, endpoint) {
   }
 
   form.reset();
-  updatePasswordStrength("");
+  validatePasswordLive();
 
   if (endpoint.endsWith("register")) {
     showMessage("Cuenta creada. Ya puedes iniciar sesion.");
@@ -136,6 +138,18 @@ function updatePasswordStrength(password) {
     const check = passwordChecks.find((rule) => rule.key === item.dataset.passwordRule);
     item.classList.toggle("complete", Boolean(check?.test(password)));
   });
+
+  return score === passwordChecks.length;
+}
+
+function validatePasswordLive() {
+  const isComplete = updatePasswordStrength(registerPasswordInput.value);
+  const hasValue = registerPasswordInput.value.length > 0;
+
+  registerPasswordInput.setCustomValidity(
+    isComplete || !hasValue ? "" : clientRules.password.message
+  );
+  registerPasswordInput.setAttribute("aria-invalid", String(hasValue && !isComplete));
 }
 
 async function refreshCaptcha() {

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const nameRegex = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ'. -]+$/u;
-const phoneRegex = /^\+?[0-9 ()-]{8,20}$/;
+const phoneRegex = /^[0-9]{10}$/;
 
 export const passwordPolicyText =
   "Usa mas de 8 caracteres con mayuscula, minuscula, numero y simbolo.";
@@ -22,8 +22,7 @@ export const registerSchema = z.object({
   phone: z
     .string()
     .trim()
-    .regex(phoneRegex, "Telefono invalido.")
-    .max(20, "El telefono no puede pasar de 20 caracteres."),
+    .regex(phoneRegex, "El telefono debe tener exactamente 10 digitos."),
   address: z
     .string()
     .trim()

@@ -4,8 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AutoPartes XYZ | Acceso</title>
-    <link rel="stylesheet" href="/styles.css" />
-    <script src="/app.js" defer></script>
+    <link rel="stylesheet" href="/styles.css?v=5" />
+    <script src="/app.js?v=5" defer></script>
   </head>
   <body>
     <main class="shell">
@@ -13,12 +13,6 @@
         <p class="eyebrow">Refaccionaria</p>
         <h1 id="brand-title">AutoPartes XYZ</h1>
         <p class="brand-copy">Accede a tu cuenta para consultar catalogo, disponibilidad y pedidos.</p>
-        <div class="security-strip" aria-label="Controles activos">
-          <span>TLS listo</span>
-          <span>bcrypt</span>
-          <span>CAPTCHA</span>
-          <span>Sesion protegida</span>
-        </div>
       </section>
 
       <section class="access-panel" aria-label="Registro e inicio de sesion">
@@ -48,10 +42,6 @@
         </form>
 
         <form id="register-form" class="auth-form hidden" novalidate>
-          <p class="form-note">
-            Puedes usar datos de prueba. Ejemplo: Ana Perez, ana@mail.com, 5551234567,
-            Av. Central 123, Seguro#123.
-          </p>
           <div class="two-columns">
             <label>
               Nombre
@@ -71,13 +61,15 @@
               <input
                 name="phone"
                 autocomplete="tel"
-                minlength="8"
-                maxlength="20"
+                inputmode="numeric"
+                minlength="10"
+                maxlength="10"
+                pattern="[0-9]{10}"
                 placeholder="5551234567"
                 aria-describedby="phone-help"
                 required
               />
-              <span id="phone-help" class="field-help">De 8 a 20 digitos; puede incluir +, espacios o guiones.</span>
+              <span id="phone-help" class="field-help">Debe tener exactamente 10 digitos.</span>
             </label>
           </div>
           <label>
@@ -116,6 +108,7 @@
               maxlength="72"
               pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9\s]).{9,72}"
               placeholder="Seguro#123"
+              aria-invalid="true"
               aria-describedby="password-help password-strength-label password-rules"
               required
             />
