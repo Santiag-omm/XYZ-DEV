@@ -16,7 +16,7 @@
 
 ## Manejo seguro de errores
 
-- El login responde `Correo o contrasena incorrectos.` para correo inexistente, contrasena incorrecta, cuenta bloqueada o CAPTCHA fallido.
+- El login responde `Credenciales invalidas.` para correo inexistente, contrasena incorrecta, cuenta bloqueada o CAPTCHA fallido.
 - En el frontend se marcan correo y contrasena juntos para no revelar cual dato fallo.
 - Tras un intento fallido se bloquea temporalmente el login con cuenta regresiva; el tiempo sube de 1 a 5 minutos segun los intentos.
 - Las respuestas no revelan si existe una cuenta asociada al correo.

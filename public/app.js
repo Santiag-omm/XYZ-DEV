@@ -31,7 +31,7 @@ const passwordChecks = [
 ];
 
 const passwordLabels = ["Sin completar", "Muy debil", "Debil", "Media", "Fuerte", "Completa"];
-const loginErrorText = "Correo o contrasena incorrectos.";
+const loginErrorText = "Credenciales invalidas.";
 const loginLockStorageKey = "autopartes.loginLockedUntil";
 let loginLockTimer;
 

@@ -25,7 +25,7 @@ import {
 import { SqliteSessionStore } from "./session-store.js";
 import { loginSchema, registerSchema, validate } from "./validation.js";
 
-const invalidLoginMessage = "Correo o contrasena incorrectos.";
+const invalidLoginMessage = "Credenciales invalidas.";
 
 export function createApp() {
   const app = express();

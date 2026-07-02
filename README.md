@@ -29,7 +29,7 @@ npm test
 | Expiracion de sesion por inactividad | `express-session` con `cookie.maxAge` y middleware `lastActivity` |
 | Consultas parametrizadas + sanitizacion XSS | `src/db.js` usa statements con `?`; `src/security.js` limpia textos |
 | Politica de contrasenas | `src/validation.js`, `public/app.js`, barra visual en `public/index.html` |
-| Mensajes de error genericos | Login responde `Correo o contrasena incorrectos.` sin revelar cual campo fallo |
+| Mensajes de error genericos | Login responde `Credenciales invalidas.` sin revelar cual campo fallo |
 
 ## Variables utiles
 
