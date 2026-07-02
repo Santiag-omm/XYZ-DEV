@@ -11,3 +11,9 @@
 - Longitud permitida: 8 a 72 caracteres.
 - Requiere mayuscula, minuscula, numero y simbolo.
 - La misma regla existe en frontend (`public/app.js`) y backend (`src/validation.js`).
+
+## Manejo seguro de errores
+
+- El login responde `Credenciales invalidas.` para correo inexistente, contrasena incorrecta, cuenta bloqueada o CAPTCHA fallido.
+- Las respuestas no revelan si existe una cuenta asociada al correo.
+- Los errores internos se responden con un mensaje generico y el detalle queda solo en consola del servidor.
