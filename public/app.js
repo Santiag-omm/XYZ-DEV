@@ -9,6 +9,7 @@ const profile = document.querySelector("#profile");
 const tabs = document.querySelectorAll(".tab");
 const loginEmailInput = loginForm.elements.email;
 const loginPasswordInput = loginForm.elements.password;
+const loginCredentialInputs = [loginEmailInput, loginPasswordInput];
 const loginError = document.querySelector("#login-error");
 const loginWarning = document.querySelector("#login-warning");
 const registerPhoneInput = registerForm.elements.phone;
@@ -55,7 +56,7 @@ registerPasswordInput.addEventListener("input", validatePasswordLive);
 registerPhoneInput.addEventListener("input", () => {
   registerPhoneInput.value = registerPhoneInput.value.replace(/\D/g, "").slice(0, 10);
 });
-[loginEmailInput, loginPasswordInput].forEach((input) => {
+loginCredentialInputs.forEach((input) => {
   input.addEventListener("input", clearLoginFeedback);
 });
 
@@ -88,6 +89,10 @@ async function handleSubmit(event, endpoint) {
   const isLogin = endpoint.endsWith("login");
 
   if (!validateClient(form)) {
+    if (isLogin) {
+      showLoginFeedback(loginErrorText);
+    }
+
     return;
   }
 
@@ -174,10 +179,12 @@ function validatePasswordLive() {
 }
 
 function showLoginFeedback(text) {
-  loginEmailInput.setAttribute("aria-invalid", "true");
-  loginPasswordInput.setAttribute("aria-invalid", "true");
-  loginEmailInput.setCustomValidity(loginErrorText);
-  loginPasswordInput.setCustomValidity(loginErrorText);
+  loginForm.classList.add("login-failed");
+  loginCredentialInputs.forEach((input) => {
+    input.classList.add("field-error");
+    input.setAttribute("aria-invalid", "true");
+    input.setCustomValidity(loginErrorText);
+  });
   loginError.textContent = text;
   loginError.classList.remove("hidden");
   loginWarning.classList.remove("hidden");
@@ -185,10 +192,12 @@ function showLoginFeedback(text) {
 }
 
 function clearLoginFeedback() {
-  loginEmailInput.setAttribute("aria-invalid", "false");
-  loginPasswordInput.setAttribute("aria-invalid", "false");
-  loginEmailInput.setCustomValidity("");
-  loginPasswordInput.setCustomValidity("");
+  loginForm.classList.remove("login-failed");
+  loginCredentialInputs.forEach((input) => {
+    input.classList.remove("field-error");
+    input.setAttribute("aria-invalid", "false");
+    input.setCustomValidity("");
+  });
   loginError.textContent = loginErrorText;
   loginError.classList.add("hidden");
   loginWarning.classList.add("hidden");

@@ -141,6 +141,12 @@ input[aria-invalid="true"] {
   box-shadow: 0 0 0 3px rgba(200, 63, 50, 0.12);
 }
 
+#login-form.login-failed input[data-login-field],
+input.field-error {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(200, 63, 50, 0.16);
+}
+
 .field-help {
   color: var(--muted);
   font-size: 0.79rem;
