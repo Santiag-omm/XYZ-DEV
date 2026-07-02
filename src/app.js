@@ -17,6 +17,8 @@ import { hashPassword, isLocked, nextFailedLoginState, sanitizeText, verifyPassw
 import { SqliteSessionStore } from "./session-store.js";
 import { loginSchema, registerSchema, validate } from "./validation.js";
 
+const invalidLoginMessage = "Correo o contrasena incorrectos.";
+
 export function createApp() {
   const app = express();
   fs.mkdirSync(config.dataDir, { recursive: true });
@@ -126,23 +128,23 @@ export function createApp() {
     try {
       const parsed = validate(loginSchema, req.body);
       if (!parsed.ok) {
-        return res.status(400).json({ message: "Credenciales invalidas." });
+        return res.status(400).json({ message: invalidLoginMessage });
       }
 
       if (!verifyCaptcha(req, parsed.data.captchaAnswer)) {
-        return res.status(400).json({ message: "Credenciales invalidas." });
+        return res.status(400).json({ message: invalidLoginMessage });
       }
 
       const user = findUserByEmail(parsed.data.email);
       if (!user || isLocked(user)) {
-        return res.status(401).json({ message: "Credenciales invalidas." });
+        return res.status(401).json({ message: invalidLoginMessage });
       }
 
       const passwordOk = await verifyPassword(parsed.data.password, user.password_hash);
       if (!passwordOk) {
         const failedState = nextFailedLoginState(user.failed_attempts);
         registerFailedAttempt(user.id, failedState.failedAttempts, failedState.lockedUntil);
-        return res.status(401).json({ message: "Credenciales invalidas." });
+        return res.status(401).json({ message: invalidLoginMessage });
       }
 
       resetFailedAttempts(user.id);

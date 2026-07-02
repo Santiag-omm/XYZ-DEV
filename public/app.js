@@ -7,6 +7,10 @@ const loginForm = document.querySelector("#login-form");
 const registerForm = document.querySelector("#register-form");
 const profile = document.querySelector("#profile");
 const tabs = document.querySelectorAll(".tab");
+const loginEmailInput = loginForm.elements.email;
+const loginPasswordInput = loginForm.elements.password;
+const loginError = document.querySelector("#login-error");
+const loginWarning = document.querySelector("#login-warning");
 const registerPhoneInput = registerForm.elements.phone;
 const registerPasswordInput = registerForm.elements.password;
 const passwordStrengthBar = document.querySelector("#password-strength-bar");
@@ -22,6 +26,7 @@ const passwordChecks = [
 ];
 
 const passwordLabels = ["Sin completar", "Muy debil", "Debil", "Media", "Fuerte", "Completa"];
+const loginErrorText = "Correo o contrasena incorrectos.";
 
 const clientRules = {
   name: {
@@ -50,6 +55,9 @@ registerPasswordInput.addEventListener("input", validatePasswordLive);
 registerPhoneInput.addEventListener("input", () => {
   registerPhoneInput.value = registerPhoneInput.value.replace(/\D/g, "").slice(0, 10);
 });
+[loginEmailInput, loginPasswordInput].forEach((input) => {
+  input.addEventListener("input", clearLoginFeedback);
+});
 
 loginForm.addEventListener("submit", (event) => handleSubmit(event, "/api/login"));
 registerForm.addEventListener("submit", (event) => handleSubmit(event, "/api/register"));
@@ -69,6 +77,7 @@ function switchTab(tabName) {
 
   loginForm.classList.toggle("hidden", tabName !== "login");
   registerForm.classList.toggle("hidden", tabName !== "register");
+  clearLoginFeedback();
   showMessage("");
   refreshCaptcha();
 }
@@ -76,9 +85,14 @@ function switchTab(tabName) {
 async function handleSubmit(event, endpoint) {
   event.preventDefault();
   const form = event.currentTarget;
+  const isLogin = endpoint.endsWith("login");
 
   if (!validateClient(form)) {
     return;
+  }
+
+  if (isLogin) {
+    clearLoginFeedback();
   }
 
   const payload = Object.fromEntries(new FormData(form).entries());
@@ -88,6 +102,12 @@ async function handleSubmit(event, endpoint) {
   });
 
   if (!result.ok) {
+    if (isLogin && [400, 401, 429].includes(result.status)) {
+      showLoginFeedback(result.status === 429 ? result.data.message : loginErrorText);
+      refreshCaptcha();
+      return;
+    }
+
     showMessage(result.data.message || "No se pudo completar la operacion.", true);
     refreshCaptcha();
     return;
@@ -103,6 +123,7 @@ async function handleSubmit(event, endpoint) {
   }
 
   showProfile(result.data.user);
+  clearLoginFeedback();
   showMessage("Sesion iniciada.");
 }
 
@@ -150,6 +171,27 @@ function validatePasswordLive() {
     isComplete || !hasValue ? "" : clientRules.password.message
   );
   registerPasswordInput.setAttribute("aria-invalid", String(hasValue && !isComplete));
+}
+
+function showLoginFeedback(text) {
+  loginEmailInput.setAttribute("aria-invalid", "true");
+  loginPasswordInput.setAttribute("aria-invalid", "true");
+  loginEmailInput.setCustomValidity(loginErrorText);
+  loginPasswordInput.setCustomValidity(loginErrorText);
+  loginError.textContent = text;
+  loginError.classList.remove("hidden");
+  loginWarning.classList.remove("hidden");
+  showMessage("");
+}
+
+function clearLoginFeedback() {
+  loginEmailInput.setAttribute("aria-invalid", "false");
+  loginPasswordInput.setAttribute("aria-invalid", "false");
+  loginEmailInput.setCustomValidity("");
+  loginPasswordInput.setCustomValidity("");
+  loginError.textContent = loginErrorText;
+  loginError.classList.add("hidden");
+  loginWarning.classList.add("hidden");
 }
 
 async function refreshCaptcha() {

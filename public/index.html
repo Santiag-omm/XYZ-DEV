@@ -4,8 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AutoPartes XYZ | Acceso</title>
-    <link rel="stylesheet" href="/styles.css?v=5" />
-    <script src="/app.js?v=5" defer></script>
+    <link rel="stylesheet" href="/styles.css?v=6" />
+    <script src="/app.js?v=6" defer></script>
   </head>
   <body>
     <main class="shell">
@@ -28,12 +28,32 @@
         <form id="login-form" class="auth-form" novalidate>
           <label>
             Correo
-            <input name="email" type="email" autocomplete="email" maxlength="120" required />
+            <input
+              name="email"
+              type="email"
+              autocomplete="email"
+              maxlength="120"
+              aria-describedby="login-error login-warning"
+              aria-invalid="false"
+              required
+            />
           </label>
           <label>
             Contrasena
-            <input name="password" type="password" autocomplete="current-password" maxlength="72" required />
+            <input
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              maxlength="72"
+              aria-describedby="login-error login-warning"
+              aria-invalid="false"
+              required
+            />
           </label>
+          <p id="login-error" class="login-error hidden">Correo o contrasena incorrectos.</p>
+          <p id="login-warning" class="login-warning hidden">
+            Advertencia: despues del primer intento fallido, la cuenta puede suspenderse temporalmente.
+          </p>
           <label>
             CAPTCHA: <strong data-captcha-question>cargando...</strong>
             <input name="captchaAnswer" inputmode="numeric" maxlength="3" required />

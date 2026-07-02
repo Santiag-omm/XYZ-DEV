@@ -138,10 +138,7 @@ input {
 
 input[aria-invalid="true"] {
   border-color: var(--accent);
-}
-
-input[aria-invalid="false"] {
-  border-color: #24814e;
+  box-shadow: 0 0 0 3px rgba(200, 63, 50, 0.12);
 }
 
 .field-help {
@@ -253,6 +250,28 @@ button[type="submit"]:hover,
 
 .message.error {
   color: var(--accent-strong);
+}
+
+.login-error,
+.login-warning {
+  margin: -2px 0 0;
+  border-radius: 6px;
+  padding: 9px 11px;
+  font-size: 0.86rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.login-error {
+  border: 1px solid rgba(200, 63, 50, 0.35);
+  background: #fff1ef;
+  color: var(--accent-strong);
+}
+
+.login-warning {
+  border: 1px solid rgba(209, 130, 36, 0.4);
+  background: #fff7e6;
+  color: #6b4715;
 }
 
 .profile {

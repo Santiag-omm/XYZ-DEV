@@ -16,6 +16,6 @@
 
 ## Manejo seguro de errores
 
-- El login responde `Credenciales invalidas.` para correo inexistente, contrasena incorrecta, cuenta bloqueada o CAPTCHA fallido.
+- El login responde `Correo o contrasena incorrectos.` para correo inexistente, contrasena incorrecta, cuenta bloqueada o CAPTCHA fallido.
 - Las respuestas no revelan si existe una cuenta asociada al correo.
 - Los errores internos se responden con un mensaje generico y el detalle queda solo en consola del servidor.
