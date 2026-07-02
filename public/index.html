@@ -48,23 +48,63 @@
         </form>
 
         <form id="register-form" class="auth-form hidden" novalidate>
+          <p class="form-note">
+            Puedes usar datos de prueba. Ejemplo: Ana Perez, ana@mail.com, 5551234567,
+            Av. Central 123, Seguro#123.
+          </p>
           <div class="two-columns">
             <label>
               Nombre
-              <input name="name" autocomplete="name" minlength="2" maxlength="80" required />
+              <input
+                name="name"
+                autocomplete="name"
+                minlength="2"
+                maxlength="80"
+                placeholder="Ana Perez"
+                aria-describedby="name-help"
+                required
+              />
+              <span id="name-help" class="field-help">Solo letras, espacios y puntuacion comun.</span>
             </label>
             <label>
               Telefono
-              <input name="phone" autocomplete="tel" minlength="8" maxlength="20" required />
+              <input
+                name="phone"
+                autocomplete="tel"
+                minlength="8"
+                maxlength="20"
+                placeholder="5551234567"
+                aria-describedby="phone-help"
+                required
+              />
+              <span id="phone-help" class="field-help">De 8 a 20 digitos; puede incluir +, espacios o guiones.</span>
             </label>
           </div>
           <label>
             Correo
-            <input name="email" type="email" autocomplete="email" maxlength="120" required />
+            <input
+              name="email"
+              type="email"
+              autocomplete="email"
+              maxlength="120"
+              placeholder="ana@mail.com"
+              aria-describedby="email-help"
+              required
+            />
+            <span id="email-help" class="field-help">Debe tener formato de correo valido.</span>
           </label>
           <label>
             Direccion de entrega
-            <input name="address" autocomplete="street-address" minlength="8" maxlength="180" required />
+            <input
+              name="address"
+              autocomplete="street-address"
+              minlength="8"
+              maxlength="180"
+              placeholder="Av. Central 123"
+              aria-describedby="address-help"
+              required
+            />
+            <span id="address-help" class="field-help">Calle, numero y alguna referencia breve.</span>
           </label>
           <label>
             Contrasena
@@ -75,12 +115,25 @@
               minlength="8"
               maxlength="72"
               pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,72}"
+              placeholder="Seguro#123"
+              aria-describedby="password-help"
               required
             />
+            <span id="password-help" class="field-help">
+              Minimo 8 caracteres con mayuscula, minuscula, numero y simbolo.
+            </span>
           </label>
           <label>
             CAPTCHA: <strong data-captcha-question>cargando...</strong>
-            <input name="captchaAnswer" inputmode="numeric" maxlength="3" required />
+            <input
+              name="captchaAnswer"
+              inputmode="numeric"
+              maxlength="3"
+              placeholder="resultado"
+              aria-describedby="captcha-help"
+              required
+            />
+            <span id="captcha-help" class="field-help">Escribe el resultado de la suma que aparece arriba.</span>
           </label>
           <button type="submit">Crear cuenta</button>
         </form>

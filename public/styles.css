@@ -129,6 +129,17 @@ button[type="submit"],
   gap: 14px;
 }
 
+.form-note {
+  margin: 0;
+  border-left: 4px solid var(--focus);
+  background: #fff8e8;
+  padding: 10px 12px;
+  color: #4d3f22;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  font-weight: 700;
+}
+
 .two-columns {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -151,6 +162,13 @@ input {
   background: var(--surface);
   padding: 0 12px;
   color: var(--ink);
+}
+
+.field-help {
+  color: var(--muted);
+  font-size: 0.79rem;
+  font-weight: 650;
+  line-height: 1.35;
 }
 
 input:focus,
