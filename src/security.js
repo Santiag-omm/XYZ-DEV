@@ -23,8 +23,16 @@ export function isLocked(user) {
 
 export function nextFailedLoginState(currentAttempts) {
   const failedAttempts = currentAttempts + 1;
-  const lockedUntil =
-    failedAttempts >= config.loginMaxAttempts ? Date.now() + config.accountLockMs : null;
+  const lockMinutes = lockMinutesForAttempts(failedAttempts);
+  const lockedUntil = Date.now() + lockDurationMsForAttempts(failedAttempts);
 
-  return { failedAttempts, lockedUntil };
+  return { failedAttempts, lockedUntil, lockMinutes };
+}
+
+export function lockDurationMsForAttempts(failedAttempts) {
+  return lockMinutesForAttempts(failedAttempts) * config.loginLockUnitMs;
+}
+
+export function lockMinutesForAttempts(failedAttempts) {
+  return Math.min(Math.max(Number(failedAttempts) || 1, 1), config.loginMaxLockMinutes);
 }

@@ -4,14 +4,17 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AutoPartes XYZ | Acceso</title>
-    <link rel="stylesheet" href="/styles.css?v=7" />
-    <script src="/app.js?v=7" defer></script>
+    <link rel="stylesheet" href="/styles.css?v=8" />
+    <script src="/app.js?v=8" defer></script>
   </head>
   <body>
     <main class="shell">
       <section class="brand-panel" aria-labelledby="brand-title">
         <p class="eyebrow">Refaccionaria</p>
-        <h1 id="brand-title">AutoPartes XYZ</h1>
+        <div class="logo-lockup logo-reveal" aria-label="AutoPartes XYZ">
+          <span class="logo-mark">AX</span>
+          <h1 id="brand-title">AutoPartes XYZ</h1>
+        </div>
         <p class="brand-copy">Accede a tu cuenta para consultar catalogo, disponibilidad y pedidos.</p>
       </section>
 
@@ -56,6 +59,7 @@
           <p id="login-warning" class="login-warning hidden">
             Advertencia: despues del primer intento fallido, la cuenta puede suspenderse temporalmente.
           </p>
+          <p id="login-lock" class="login-lock hidden" aria-live="polite"></p>
           <label>
             CAPTCHA: <strong data-captcha-question>cargando...</strong>
             <input name="captchaAnswer" inputmode="numeric" maxlength="3" required />
@@ -168,23 +172,66 @@
           <button type="submit">Crear cuenta</button>
         </form>
 
-        <section id="profile" class="profile hidden" aria-live="polite">
-          <h2>Sesion activa</h2>
-          <dl>
+        <section id="profile" class="profile product-page hidden" aria-live="polite">
+          <header class="product-header">
+            <div class="logo-lockup dashboard-logo">
+              <span class="logo-mark">AX</span>
+              <h2>AutoPartes XYZ</h2>
+            </div>
+            <button id="logout-button" type="button">Cerrar sesion</button>
+          </header>
+
+          <section class="customer-strip" aria-label="Datos de la cuenta">
             <div>
-              <dt>Cliente</dt>
-              <dd data-profile="name"></dd>
+              <span class="meta-label">Cliente</span>
+              <span class="meta-value" data-profile="name"></span>
             </div>
             <div>
-              <dt>Correo</dt>
-              <dd data-profile="email"></dd>
+              <span class="meta-label">Correo</span>
+              <span class="meta-value" data-profile="email"></span>
             </div>
             <div>
-              <dt>Direccion</dt>
-              <dd data-profile="address"></dd>
+              <span class="meta-label">Entrega</span>
+              <span class="meta-value" data-profile="address"></span>
             </div>
-          </dl>
-          <button id="logout-button" type="button">Cerrar sesion</button>
+          </section>
+
+          <section class="catalog" aria-labelledby="catalog-title">
+            <div class="catalog-heading">
+              <p class="eyebrow">Catalogo</p>
+              <h3 id="catalog-title">Refacciones disponibles</h3>
+            </div>
+            <div class="product-grid">
+              <article class="product-card">
+                <div class="product-media product-brake" aria-hidden="true"></div>
+                <h4>Balatas ceramicas</h4>
+                <p>Juego delantero para sedan compacto.</p>
+                <strong>$849 MXN</strong>
+                <span>Disponible hoy</span>
+              </article>
+              <article class="product-card">
+                <div class="product-media product-filter" aria-hidden="true"></div>
+                <h4>Filtro de aceite</h4>
+                <p>Compatible con motores 1.6L y 2.0L.</p>
+                <strong>$189 MXN</strong>
+                <span>Entrega a domicilio</span>
+              </article>
+              <article class="product-card">
+                <div class="product-media product-battery" aria-hidden="true"></div>
+                <h4>Bateria 12V</h4>
+                <p>650 CCA con garantia limitada.</p>
+                <strong>$2,450 MXN</strong>
+                <span>Ultimas piezas</span>
+              </article>
+              <article class="product-card">
+                <div class="product-media product-spark" aria-hidden="true"></div>
+                <h4>Bujias iridium</h4>
+                <p>Paquete de 4 piezas de alto rendimiento.</p>
+                <strong>$620 MXN</strong>
+                <span>Pickup en tienda</span>
+              </article>
+            </div>
+          </section>
         </section>
 
         <p id="message" class="message" role="status" aria-live="polite"></p>

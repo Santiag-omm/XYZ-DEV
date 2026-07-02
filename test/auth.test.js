@@ -15,8 +15,9 @@ describe("autenticacion segura", () => {
     process.env.DATABASE_PATH = path.join(tempDir, "test.sqlite");
     process.env.SESSION_SECRET = "clave-de-prueba-con-mas-de-32-caracteres";
     process.env.LOGIN_MAX_ATTEMPTS = "3";
+    process.env.LOGIN_LOCK_UNIT_MS = "25";
+    process.env.LOGIN_MAX_LOCK_MINUTES = "5";
     process.env.IP_LOGIN_MAX_ATTEMPTS = "10";
-    process.env.ACCOUNT_LOCK_MS = "60000";
 
     const appModule = await import(`../src/app.js?test=${Date.now()}`);
     app = appModule.createApp();
@@ -83,7 +84,7 @@ describe("autenticacion segura", () => {
     assert.ok(response.body.errors.length >= 4);
   });
 
-  it("bloquea temporalmente tras varios intentos fallidos", async () => {
+  it("bloquea temporalmente y aumenta el tiempo tras intentos fallidos", async () => {
     const agent = request.agent(app);
     const captcha = await agent.get("/api/captcha").expect(200);
 
@@ -99,17 +100,17 @@ describe("autenticacion segura", () => {
       })
       .expect(201);
 
-    for (let index = 0; index < 3; index += 1) {
-      const loginCaptcha = await agent.get("/api/captcha").expect(200);
-      await agent
-        .post("/api/login")
-        .send({
-          email: "luis@example.com",
-          password: "Incorrecta#123",
-          captchaAnswer: solve(loginCaptcha.body.question)
-        })
-        .expect(401);
-    }
+    const firstCaptcha = await agent.get("/api/captcha").expect(200);
+    const firstLock = await agent
+      .post("/api/login")
+      .send({
+        email: "luis@example.com",
+        password: "Incorrecta#123",
+        captchaAnswer: solve(firstCaptcha.body.question)
+      })
+      .expect(423);
+
+    assert.equal(firstLock.body.lockMinutes, 1);
 
     const goodCaptcha = await agent.get("/api/captcha").expect(200);
     await agent
@@ -119,11 +120,31 @@ describe("autenticacion segura", () => {
         password: "Seguro#123",
         captchaAnswer: solve(goodCaptcha.body.question)
       })
-      .expect(401);
+      .expect(423);
+
+    await delay(40);
+
+    const secondCaptcha = await agent.get("/api/captcha").expect(200);
+    const secondLock = await agent
+      .post("/api/login")
+      .send({
+        email: "luis@example.com",
+        password: "Incorrecta#123",
+        captchaAnswer: solve(secondCaptcha.body.question)
+      })
+      .expect(423);
+
+    assert.equal(secondLock.body.lockMinutes, 2);
   });
 });
 
 function solve(question) {
   const [left, right] = question.match(/\d+/g).map(Number);
   return String(left + right);
+}
+
+function delay(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
 }

@@ -34,11 +34,14 @@ export const config = {
   get loginMaxAttempts() {
     return Number(process.env.LOGIN_MAX_ATTEMPTS || 5);
   },
+  get loginLockUnitMs() {
+    return Number(process.env.LOGIN_LOCK_UNIT_MS || 60 * 1000);
+  },
+  get loginMaxLockMinutes() {
+    return Number(process.env.LOGIN_MAX_LOCK_MINUTES || 5);
+  },
   get ipLoginMaxAttempts() {
     return Number(process.env.IP_LOGIN_MAX_ATTEMPTS || this.loginMaxAttempts);
-  },
-  get accountLockMs() {
-    return Number(process.env.ACCOUNT_LOCK_MS || 5 * 60 * 1000);
   },
   get bcryptRounds() {
     return Number(process.env.BCRYPT_ROUNDS || 12);

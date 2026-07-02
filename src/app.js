@@ -13,7 +13,15 @@ import {
   registerFailedAttempt,
   resetFailedAttempts
 } from "./db.js";
-import { hashPassword, isLocked, nextFailedLoginState, sanitizeText, verifyPassword } from "./security.js";
+import {
+  hashPassword,
+  isLocked,
+  lockDurationMsForAttempts,
+  lockMinutesForAttempts,
+  nextFailedLoginState,
+  sanitizeText,
+  verifyPassword
+} from "./security.js";
 import { SqliteSessionStore } from "./session-store.js";
 import { loginSchema, registerSchema, validate } from "./validation.js";
 
@@ -126,6 +134,12 @@ export function createApp() {
 
   app.post("/api/login", loginLimiter, async (req, res, next) => {
     try {
+      if (isSessionLoginLocked(req)) {
+        return res
+          .status(423)
+          .json(lockPayload(req.session.loginLockedUntil, req.session.loginLockMinutes));
+      }
+
       const parsed = validate(loginSchema, req.body);
       if (!parsed.ok) {
         return res.status(400).json({ message: invalidLoginMessage });
@@ -136,15 +150,27 @@ export function createApp() {
       }
 
       const user = findUserByEmail(parsed.data.email);
-      if (!user || isLocked(user)) {
-        return res.status(401).json({ message: invalidLoginMessage });
+      if (!user) {
+        const lockState = lockSessionLogin(req);
+        return res.status(423).json(lockPayload(lockState.lockedUntil, lockState.lockMinutes));
+      }
+
+      if (isLocked(user)) {
+        req.session.loginLockedUntil = Number(user.locked_until);
+        req.session.loginLockMinutes = lockMinutesForAttempts(user.failed_attempts);
+        return res
+          .status(423)
+          .json(lockPayload(user.locked_until, req.session.loginLockMinutes));
       }
 
       const passwordOk = await verifyPassword(parsed.data.password, user.password_hash);
       if (!passwordOk) {
         const failedState = nextFailedLoginState(user.failed_attempts);
         registerFailedAttempt(user.id, failedState.failedAttempts, failedState.lockedUntil);
-        return res.status(401).json({ message: invalidLoginMessage });
+        req.session.loginFailures = failedState.failedAttempts;
+        req.session.loginLockedUntil = failedState.lockedUntil;
+        req.session.loginLockMinutes = failedState.lockMinutes;
+        return res.status(423).json(lockPayload(failedState.lockedUntil, failedState.lockMinutes));
       }
 
       resetFailedAttempts(user.id);
@@ -191,6 +217,42 @@ export function createApp() {
   });
 
   return app;
+}
+
+function isSessionLoginLocked(req) {
+  return Boolean(req.session.loginLockedUntil && Number(req.session.loginLockedUntil) > Date.now());
+}
+
+function lockSessionLogin(req) {
+  const loginFailures = Number(req.session.loginFailures || 0) + 1;
+  const lockMinutes = lockMinutesForAttempts(loginFailures);
+  const lockedUntil = Date.now() + lockDurationMsForAttempts(loginFailures);
+
+  req.session.loginFailures = loginFailures;
+  req.session.loginLockedUntil = lockedUntil;
+  req.session.loginLockMinutes = lockMinutes;
+
+  return { lockedUntil, lockMinutes };
+}
+
+function lockPayload(lockedUntil, lockMinutes) {
+  const retryAfterMs = Math.max(Number(lockedUntil) - Date.now(), 1000);
+
+  return {
+    message: `Acceso bloqueado temporalmente. Intenta de nuevo en ${formatDuration(retryAfterMs)}.`,
+    retryAfterMs,
+    lockMinutes: Math.min(Math.max(Number(lockMinutes) || 1, 1), config.loginMaxLockMinutes)
+  };
+}
+
+function formatDuration(durationMs) {
+  if (durationMs >= 60 * 1000) {
+    const minutes = Math.ceil(durationMs / (60 * 1000));
+    return minutes === 1 ? "1 minuto" : `${minutes} minutos`;
+  }
+
+  const seconds = Math.ceil(durationMs / 1000);
+  return seconds === 1 ? "1 segundo" : `${seconds} segundos`;
 }
 
 function publicUser(user) {

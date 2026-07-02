@@ -25,7 +25,7 @@ npm test
 | Hash de contrasenas con salt por usuario | `src/security.js` usa `bcryptjs` con salt propio por hash |
 | HTTPS/TLS | `src/server.js`, `docs/HTTPS-TLS.md` |
 | CAPTCHA con validacion en servidor | `src/captcha.js`, rutas `/api/captcha`, `/api/register`, `/api/login` |
-| Limite de intentos y bloqueo temporal | `express-rate-limit` por IP y `failed_attempts/locked_until` por usuario en `src/app.js` |
+| Limite de intentos y bloqueo temporal | `express-rate-limit` por IP y bloqueo progresivo de 1 a 5 minutos en `src/app.js` |
 | Expiracion de sesion por inactividad | `express-session` con `cookie.maxAge` y middleware `lastActivity` |
 | Consultas parametrizadas + sanitizacion XSS | `src/db.js` usa statements con `?`; `src/security.js` limpia textos |
 | Politica de contrasenas | `src/validation.js`, `public/app.js`, barra visual en `public/index.html` |
@@ -39,6 +39,7 @@ npm test
 | `SESSION_SECRET` | Secreto de cookies de sesion |
 | `SESSION_IDLE_MS` | Tiempo maximo de inactividad. Default 15 min |
 | `LOGIN_MAX_ATTEMPTS` | Intentos permitidos. Default 5 |
+| `LOGIN_LOCK_UNIT_MS` | Unidad de bloqueo progresivo. Default 60000 ms |
+| `LOGIN_MAX_LOCK_MINUTES` | Tope de bloqueo progresivo. Default 5 |
 | `IP_LOGIN_MAX_ATTEMPTS` | Intentos por IP dentro de la ventana. Default igual a `LOGIN_MAX_ATTEMPTS` |
-| `ACCOUNT_LOCK_MS` | Bloqueo temporal por cuenta. Default 5 min |
 | `HTTPS_KEY_PATH`, `HTTPS_CERT_PATH` | Activa HTTPS local |

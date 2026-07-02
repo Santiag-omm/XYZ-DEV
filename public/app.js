@@ -2,6 +2,7 @@ const state = {
   activeTab: "login"
 };
 
+const shell = document.querySelector(".shell");
 const message = document.querySelector("#message");
 const loginForm = document.querySelector("#login-form");
 const registerForm = document.querySelector("#register-form");
@@ -12,8 +13,11 @@ const loginPasswordInput = loginForm.elements.password;
 const loginCredentialInputs = [loginEmailInput, loginPasswordInput];
 const loginError = document.querySelector("#login-error");
 const loginWarning = document.querySelector("#login-warning");
+const loginLock = document.querySelector("#login-lock");
+const loginControls = Array.from(loginForm.querySelectorAll("input, button"));
 const registerPhoneInput = registerForm.elements.phone;
 const registerPasswordInput = registerForm.elements.password;
+const dashboardLogo = document.querySelector(".dashboard-logo");
 const passwordStrengthBar = document.querySelector("#password-strength-bar");
 const passwordStrengthLabel = document.querySelector("#password-strength-label");
 const passwordRuleItems = document.querySelectorAll("[data-password-rule]");
@@ -28,6 +32,8 @@ const passwordChecks = [
 
 const passwordLabels = ["Sin completar", "Muy debil", "Debil", "Media", "Fuerte", "Completa"];
 const loginErrorText = "Correo o contrasena incorrectos.";
+const loginLockStorageKey = "autopartes.loginLockedUntil";
+let loginLockTimer;
 
 const clientRules = {
   name: {
@@ -65,6 +71,7 @@ registerForm.addEventListener("submit", (event) => handleSubmit(event, "/api/reg
 document.querySelector("#logout-button").addEventListener("click", logout);
 
 validatePasswordLive();
+restoreLoginLock();
 refreshCaptcha();
 loadProfile();
 
@@ -109,6 +116,13 @@ async function handleSubmit(event, endpoint) {
   if (!result.ok) {
     if (isLogin && [400, 401, 429].includes(result.status)) {
       showLoginFeedback(result.status === 429 ? result.data.message : loginErrorText);
+      refreshCaptcha();
+      return;
+    }
+
+    if (isLogin && result.status === 423) {
+      showLoginFeedback(loginErrorText);
+      startLoginLock(result.data.retryAfterMs);
       refreshCaptcha();
       return;
     }
@@ -203,6 +217,62 @@ function clearLoginFeedback() {
   loginWarning.classList.add("hidden");
 }
 
+function startLoginLock(retryAfterMs) {
+  const lockedUntil = Date.now() + Math.max(Number(retryAfterMs) || 60 * 1000, 1000);
+  localStorage.setItem(loginLockStorageKey, String(lockedUntil));
+  renderLoginLock(lockedUntil);
+}
+
+function restoreLoginLock() {
+  const lockedUntil = Number(localStorage.getItem(loginLockStorageKey));
+
+  if (lockedUntil > Date.now()) {
+    renderLoginLock(lockedUntil);
+    return;
+  }
+
+  localStorage.removeItem(loginLockStorageKey);
+}
+
+function renderLoginLock(lockedUntil) {
+  loginForm.classList.add("login-locked");
+  loginControls.forEach((control) => {
+    control.disabled = true;
+  });
+  loginLock.classList.remove("hidden");
+
+  clearInterval(loginLockTimer);
+  updateLoginLockText(lockedUntil);
+  loginLockTimer = setInterval(() => updateLoginLockText(lockedUntil), 1000);
+}
+
+function updateLoginLockText(lockedUntil) {
+  const remainingMs = Number(lockedUntil) - Date.now();
+
+  if (remainingMs <= 0) {
+    clearInterval(loginLockTimer);
+    localStorage.removeItem(loginLockStorageKey);
+    loginForm.classList.remove("login-locked");
+    loginControls.forEach((control) => {
+      control.disabled = false;
+    });
+    loginLock.classList.add("hidden");
+    clearLoginFeedback();
+    refreshCaptcha();
+    return;
+  }
+
+  loginLock.textContent = `Acceso bloqueado temporalmente. Intenta de nuevo en ${formatCountdown(remainingMs)}.`;
+}
+
+function formatCountdown(durationMs) {
+  const totalSeconds = Math.ceil(durationMs / 1000);
+  const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+  const seconds = String(totalSeconds % 60).padStart(2, "0");
+
+  return `${minutes}:${seconds}`;
+}
+
 async function refreshCaptcha() {
   const result = await request("/api/captcha");
   if (!result.ok) {
@@ -225,6 +295,7 @@ async function loadProfile() {
 async function logout() {
   await request("/api/logout", { method: "POST" });
   profile.classList.add("hidden");
+  shell.classList.remove("dashboard-mode");
   document.querySelector(".tabs").classList.remove("hidden");
   loginForm.classList.toggle("hidden", state.activeTab !== "login");
   registerForm.classList.toggle("hidden", state.activeTab !== "register");
@@ -236,10 +307,18 @@ function showProfile(user) {
   document.querySelector("[data-profile='name']").textContent = user.name;
   document.querySelector("[data-profile='email']").textContent = user.email;
   document.querySelector("[data-profile='address']").textContent = user.address;
+  shell.classList.add("dashboard-mode");
   document.querySelector(".tabs").classList.add("hidden");
   loginForm.classList.add("hidden");
   registerForm.classList.add("hidden");
   profile.classList.remove("hidden");
+  replayDashboardLogo();
+}
+
+function replayDashboardLogo() {
+  dashboardLogo.classList.remove("reveal-now");
+  void dashboardLogo.offsetWidth;
+  dashboardLogo.classList.add("reveal-now");
 }
 
 function showMessage(text, isError = false) {
