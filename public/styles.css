@@ -171,6 +171,81 @@ input {
   line-height: 1.35;
 }
 
+.password-guidance {
+  display: grid;
+  gap: 8px;
+}
+
+.password-meter {
+  height: 9px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #dde5ef;
+}
+
+.password-meter span {
+  display: block;
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition:
+    width 160ms ease,
+    background-color 160ms ease;
+}
+
+.password-meter span[data-score="3"] {
+  background: #d18224;
+}
+
+.password-meter span[data-score="4"],
+.password-meter span[data-score="5"] {
+  background: #24814e;
+}
+
+.password-strength {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.password-checklist {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.3;
+  list-style: none;
+}
+
+.password-checklist li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.password-checklist li::before {
+  width: 10px;
+  height: 10px;
+  border: 2px solid #aab5c4;
+  border-radius: 999px;
+  content: "";
+  flex: 0 0 auto;
+}
+
+.password-checklist li.complete {
+  color: #1d6f44;
+}
+
+.password-checklist li.complete::before {
+  border-color: #1d6f44;
+  background: #1d6f44;
+}
+
 input:focus,
 button:focus-visible {
   outline: 3px solid rgba(242, 180, 65, 0.5);

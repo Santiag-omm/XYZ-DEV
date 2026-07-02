@@ -8,9 +8,10 @@
 
 ## Politica de contrasenas
 
-- Longitud permitida: 8 a 72 caracteres.
+- Longitud permitida: 9 a 72 caracteres.
 - Requiere mayuscula, minuscula, numero y simbolo.
 - La misma regla existe en frontend (`public/app.js`) y backend (`src/validation.js`).
+- El formulario muestra una barra que calcula el avance de seguridad segun los requisitos cumplidos.
 
 ## Manejo seguro de errores
 

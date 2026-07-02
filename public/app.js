@@ -7,6 +7,20 @@ const loginForm = document.querySelector("#login-form");
 const registerForm = document.querySelector("#register-form");
 const profile = document.querySelector("#profile");
 const tabs = document.querySelectorAll(".tab");
+const registerPasswordInput = registerForm.elements.password;
+const passwordStrengthBar = document.querySelector("#password-strength-bar");
+const passwordStrengthLabel = document.querySelector("#password-strength-label");
+const passwordRuleItems = document.querySelectorAll("[data-password-rule]");
+
+const passwordChecks = [
+  { key: "length", test: (value) => value.length > 8 },
+  { key: "lowercase", test: (value) => /[a-z]/.test(value) },
+  { key: "uppercase", test: (value) => /[A-Z]/.test(value) },
+  { key: "number", test: (value) => /[0-9]/.test(value) },
+  { key: "symbol", test: (value) => /[^A-Za-z0-9\s]/.test(value) }
+];
+
+const passwordLabels = ["Sin completar", "Muy debil", "Debil", "Media", "Fuerte", "Completa"];
 
 const clientRules = {
   name: {
@@ -22,8 +36,8 @@ const clientRules = {
     message: "La direccion debe tener 8 a 180 caracteres."
   },
   password: {
-    pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,72}$/,
-    message: "La contrasena requiere mayuscula, minuscula, numero y simbolo."
+    pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9\s]).{9,72}$/,
+    message: "La contrasena requiere mas de 8 caracteres, mayuscula, minuscula, numero y simbolo."
   }
 };
 
@@ -31,10 +45,15 @@ tabs.forEach((tab) => {
   tab.addEventListener("click", () => switchTab(tab.dataset.tab));
 });
 
+registerPasswordInput.addEventListener("input", () => {
+  updatePasswordStrength(registerPasswordInput.value);
+});
+
 loginForm.addEventListener("submit", (event) => handleSubmit(event, "/api/login"));
 registerForm.addEventListener("submit", (event) => handleSubmit(event, "/api/register"));
 document.querySelector("#logout-button").addEventListener("click", logout);
 
+updatePasswordStrength("");
 refreshCaptcha();
 loadProfile();
 
@@ -73,6 +92,7 @@ async function handleSubmit(event, endpoint) {
   }
 
   form.reset();
+  updatePasswordStrength("");
 
   if (endpoint.endsWith("register")) {
     showMessage("Cuenta creada. Ya puedes iniciar sesion.");
@@ -91,7 +111,9 @@ function validateClient(form) {
 
   for (const [name, rule] of Object.entries(clientRules)) {
     const input = form.elements[name];
-    if (input && !rule.pattern.test(input.value.trim())) {
+    const value = name === "password" ? input?.value : input?.value.trim();
+
+    if (input && !rule.pattern.test(value)) {
       input.setCustomValidity(rule.message);
       input.reportValidity();
       input.setCustomValidity("");
@@ -100,6 +122,20 @@ function validateClient(form) {
   }
 
   return true;
+}
+
+function updatePasswordStrength(password) {
+  const score = passwordChecks.filter((check) => check.test(password)).length;
+  const percent = Math.round((score / passwordChecks.length) * 100);
+
+  passwordStrengthBar.style.width = `${percent}%`;
+  passwordStrengthBar.dataset.score = String(score);
+  passwordStrengthLabel.textContent = `Seguridad: ${percent}% (${passwordLabels[score]})`;
+
+  passwordRuleItems.forEach((item) => {
+    const check = passwordChecks.find((rule) => rule.key === item.dataset.passwordRule);
+    item.classList.toggle("complete", Boolean(check?.test(password)));
+  });
 }
 
 async function refreshCaptcha() {

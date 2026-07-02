@@ -4,7 +4,7 @@ const nameRegex = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ'. -]+$/u;
 const phoneRegex = /^\+?[0-9 ()-]{8,20}$/;
 
 export const passwordPolicyText =
-  "Usa 8 a 72 caracteres con mayuscula, minuscula, numero y simbolo.";
+  "Usa mas de 8 caracteres con mayuscula, minuscula, numero y simbolo.";
 
 export const registerSchema = z.object({
   name: z
@@ -31,12 +31,12 @@ export const registerSchema = z.object({
     .max(180, "La direccion no puede pasar de 180 caracteres."),
   password: z
     .string()
-    .min(8, passwordPolicyText)
+    .min(9, passwordPolicyText)
     .max(72, "La contrasena no puede pasar de 72 caracteres.")
     .regex(/[a-z]/, passwordPolicyText)
     .regex(/[A-Z]/, passwordPolicyText)
     .regex(/[0-9]/, passwordPolicyText)
-    .regex(/[^A-Za-z0-9]/, passwordPolicyText),
+    .regex(/[^A-Za-z0-9\s]/, passwordPolicyText),
   captchaAnswer: z.string().trim().min(1, "Resuelve el reto CAPTCHA.")
 });
 

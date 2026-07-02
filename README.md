@@ -28,7 +28,7 @@ npm test
 | Limite de intentos y bloqueo temporal | `express-rate-limit` por IP y `failed_attempts/locked_until` por usuario en `src/app.js` |
 | Expiracion de sesion por inactividad | `express-session` con `cookie.maxAge` y middleware `lastActivity` |
 | Consultas parametrizadas + sanitizacion XSS | `src/db.js` usa statements con `?`; `src/security.js` limpia textos |
-| Politica de contrasenas | `src/validation.js`, `public/app.js` |
+| Politica de contrasenas | `src/validation.js`, `public/app.js`, barra visual en `public/index.html` |
 | Mensajes de error genericos | Login responde `Credenciales invalidas.` sin revelar si fallo correo o contrasena |
 
 ## Variables utiles

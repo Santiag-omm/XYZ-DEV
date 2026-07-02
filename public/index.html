@@ -112,16 +112,31 @@
               name="password"
               type="password"
               autocomplete="new-password"
-              minlength="8"
+              minlength="9"
               maxlength="72"
-              pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,72}"
+              pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9\s]).{9,72}"
               placeholder="Seguro#123"
-              aria-describedby="password-help"
+              aria-describedby="password-help password-strength-label password-rules"
               required
             />
             <span id="password-help" class="field-help">
-              Minimo 8 caracteres con mayuscula, minuscula, numero y simbolo.
+              La barra se llena conforme completas los requisitos.
             </span>
+            <div class="password-guidance">
+              <div class="password-meter" aria-hidden="true">
+                <span id="password-strength-bar" data-score="0"></span>
+              </div>
+              <p id="password-strength-label" class="password-strength" aria-live="polite">
+                Seguridad: 0%
+              </p>
+              <ul id="password-rules" class="password-checklist">
+                <li data-password-rule="length">Mas de 8 caracteres</li>
+                <li data-password-rule="lowercase">Anade una minuscula</li>
+                <li data-password-rule="uppercase">Anade una mayuscula</li>
+                <li data-password-rule="number">Anade un numero</li>
+                <li data-password-rule="symbol">Anade un simbolo como / % & #</li>
+              </ul>
+            </div>
           </label>
           <label>
             CAPTCHA: <strong data-captcha-question>cargando...</strong>
